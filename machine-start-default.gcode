@@ -1,5 +1,5 @@
 ;===== machine: A1 mini =========================
-;===== date: 20251031 ==================
+;===== date: 20260513 ==================
 
 ;===== start to heat heatbead&hotend==========
 M1002 gcode_claim_action : 2
@@ -80,19 +80,32 @@ M620 S[initial_no_support_extruder]A   ; switch material if AMS exist
     M400
     M1002 set_filament_type:UNKNOWN
     M109 S[nozzle_temperature_initial_layer]
+{if (filament_type[initial_no_support_extruder] == "PLA") && (nozzle_diameter != 0.2)}
+    M104 S220
+{else}
     M104 S250
+{endif}
     M400
     T[initial_no_support_extruder]
     G1 X-13.5 F3000
     M400
+{if (filament_type[initial_no_support_extruder] == "PLA") && (nozzle_diameter != 0.2)}
+    M620.1 E F{flush_volumetric_speeds[initial_no_support_extruder]/2.4053*60} T220
+    M109 S220 ;set nozzle to common flush temp
+{else}
     M620.1 E F{flush_volumetric_speeds[initial_no_support_extruder]/2.4053*60} T{flush_temperatures[initial_no_support_extruder]}
     M109 S250 ;set nozzle to common flush temp
+{endif}
     M106 P1 S0
     G92 E0
     G1 E50 F200
     M400
     M1002 set_filament_type:{filament_type[initial_no_support_extruder]}
+{if (filament_type[initial_no_support_extruder] == "PLA") && (nozzle_diameter != 0.2)}
+    M104 S220
+{else}
     M104 S{flush_temperatures[initial_no_support_extruder]}
+{endif}
     G92 E0
     G1 E50 F{flush_volumetric_speeds[initial_no_support_extruder]/2.4053*60}
     M400

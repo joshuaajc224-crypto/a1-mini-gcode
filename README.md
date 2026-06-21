@@ -10,11 +10,21 @@ This script replaces your machine's default start G-code. Always save your origi
 
 The stock Bambu start routine is effective but can be noisy, repetitive, and occasionally leaves residue that affects bed leveling. This project optimizes the startup process, minimizing redundant moves and staging temperatures for a faster start to the first layer.
 
-## Testing Status & Community Validation
+## Testing Status & Stability
 
 This routine was developed and tested exclusively on my **A1 Mini**.
 
+The current approach has been in continuous use since `20251111` and has accumulated roughly **2,000 print hours**. At this point I consider the routine very stable on my machine, while still strongly recommending careful first-print supervision for any new printer profile or hardware setup.
+
 While I want to expand support to other Bambu machines over time, I currently do not have the machines to verify safety and timing on those platforms.
+
+## Version Notes
+
+**Current optimized routine:** `1.4.2`
+
+This release captures the Bambu Studio A1 Mini stock reference dated `20260513` in `machine-start-default.gcode`. The upstream default includes newer PLA-specific AMS flush temperature handling. That behavior was reviewed but intentionally not ported into `machine-start.gcode`, because this optimized routine manages heat staging and filament preparation through its own more flexible temperature flow.
+
+Special thanks to [luckykong](https://github.com/luckykong) for taking the time to open [issue #1](https://github.com/cameroncondry/a1-mini-gcode/issues/1) and flag the newer Bambu Studio A1 Mini timestamp. I am genuinely thankful for the report.
 
 ## Installation
 1. Open **Bambu Studio**.

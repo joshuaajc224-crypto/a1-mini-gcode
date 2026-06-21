@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.2] - 2026-06-21
+- Updated `machine-start-default.gcode` to the Bambu Studio A1 Mini default dated `20260513`.
+- Reviewed Bambu Studio's newer PLA-specific AMS flush temperature handling and intentionally left it out of `machine-start.gcode`.
+- Documented long-running stability: this routine has been tested since `20251111` across roughly 2,000 print hours.
+
 ## [1.4.1] - 2026-04-11
 - Tuned the 0.4mm nozzle startup sound to be similar to the Digivice alert sound.
 - Added `g-code-player.html` to test various startup sounds by emulating the A1 Mini.
