@@ -4,11 +4,11 @@
 
 ; =====================================================
 ; ===== Machine: A1 Mini ==============================
-; ===== Version: 1.4.2 ================================
-; ===== Date: June 21, 2026 ===========================
+; ===== Version: 3.26.0 ================================
+; ===== Date: August 11, 2026 ===========================
 ; ===== Company: Cascade Media LLC ====================
-; ===== Modified By: Cameron Condry ===================
-; ===== Email: cameron@cascademedia.us ================
+; ===== Modified By: Joshua Campbell ===================
+; ===== Email: josh@onimpulse.com.au ================
 ; =====================================================
 
 ; ===== start warm-up sequence ========================
@@ -25,7 +25,7 @@ M9833.2                                 ; bambu: set noise params
 ; ===== start printer sound ===========================
 M17                                     ; enable motors for sound
 M400 S1                                 ; wait for sync
-M1006 S1                                ; enable sound speaker
+M1006 S1                                ; disable sound speaker
 M1006 A0 B0 L70 C60 D10 M100 E60 F10 N100   ; C5
 M1006 A0 B0 L85 C57 D10 M100 E57 F10 N100   ; A4
 M1006 A0 B0 L70 C60 D10 M100 E60 F10 N100   ; C5
