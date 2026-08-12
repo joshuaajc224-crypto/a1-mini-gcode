@@ -1,31 +1,25 @@
 ; A1 Mini Optimized Start Routine:
 ; Provides a drop-in replacement for an optimized start
 ; routine that aims to be faster, safer, and quieter.
-
-; =====================================================
 ; ===== Machine: A1 Mini ==============================
-; ===== Version: 1.4.2 ================================
-; ===== Date: June 21, 2026 ===========================
+; ===== Version: 3.26.0==================================
+; ===== Date: August 11, 2026 ===========================
 ; ===== Company: Cascade Media LLC ====================
-; ===== Modified By: Cameron Condry ===================
-; ===== Email: cameron@cascademedia.us ================
-; =====================================================
-
+; ===== Modified By: Josh Campbell ===================
+; ===== Email: josh@onimpulse.com.au ================
 ; ===== start warm-up sequence ========================
 M1002 gcode_claim_action : 2            ; status: heatbed preheating
 M1002 set_filament_type:{filament_type[initial_no_support_extruder]}
 
 ; non-blocking preheat for nozzle probing and bed leveling with slight heat soak
 M104 S140
-M140 S{bed_temperature_initial_layer_single + 5}
-
+M140 S{bed_temperature_initial_layer_single + 5} 
 G392 S0                                 ; disable clog detect
 M9833.2                                 ; bambu: set noise params
-
 ; ===== start printer sound ===========================
 M17                                     ; enable motors for sound
 M400 S1                                 ; wait for sync
-M1006 S1                                ; enable sound speaker
+M1006 S1                                ; disable sound speaker
 M1006 A0 B0 L70 C60 D10 M100 E60 F10 N100   ; C5
 M1006 A0 B0 L85 C57 D10 M100 E57 F10 N100   ; A4
 M1006 A0 B0 L70 C60 D10 M100 E60 F10 N100   ; C5
@@ -37,24 +31,20 @@ M1006 A0 B0 L75 C67 D10 M100 E67 F10 N100   ; G5
 M1006 A0 B0 L140 C64 D10 M100 E64 F10 N100  ; E5
 M1006 W                                 ; wait for sound to finish
 M18                                     ; disable motors to reset
-
 ; ===== initialize printer state ======================
 G90                                     ; absolute positioning
 M83                                     ; relative extrusion
 M211 X1 Y1 Z1                           ; enable soft endstops
 M630 S0 P0                              ; bambu: reset internal state
-
 M204 S6000                              ; set default acceleration
 M17 X0.7 Y0.9 Z0.3                      ; set optimized motor currents
 M960 S5 P1                              ; enable toolhead lamp
 M220 S100                               ; reset feedrate to 100%
 M221 S100                               ; reset flowrate to 100%
-
 M982.2 S1                               ; enable cog noise reduction
 M975 S1                                 ; enable vibration suppression
 M106 P1 S0                              ; disable fan while heating
 M73.2 R1.0                              ; reset time left
-
 ; ===== safe axis recovery (first move) ===============
 M1002 gcode_claim_action : 13           ; status: toolhead homing
 M17                                     ; enable motors (baseline)
@@ -64,25 +54,21 @@ G380 S3 Z-6 F1200                       ; guarded Z down
 G1 Z4 F1200                             ; add clearance
 G90                                     ; absolute positioning
 M400                                    ; wait for moves to finish
-
 ; ===== home and stage toolhead =======================
 G28 X Y                                 ; home X and Y first
 G1 X50 Y175 F6000                       ; move to safe and stable spot for Z-homing
 G28 Z P0 T300                           ; home Z with low precision
 M17 Z0.5                                ; restore Z current to default after homing
 M400
-
 ; ===== disable endstops ==============================
 M211 S                                  ; push soft endstops status
 M211 X0 Y0 Z0                           ; disable soft endstops for wiper access
-
 ;===== build plate detection (flagged) ================
 M1002 judge_flag build_plate_detect_flag
 M622 S1
     G39.4                               ; bambu: quick build plate detection
     M400
 M623
-
 ; perform first wipe for easily removable filament
 G1 Z5 F3000                             ; clearance
 G1 X0 F12000                            ; move to service area edge
@@ -90,7 +76,6 @@ G1 X-13.5 F3000                         ; move nozzle into wiper
 G1 X0 F24000                            ; reset to edge
 G1 X-13.5 F3000                         ; double wipe, end in wiper for final flick
 M400
-
 ;===== switch material in AMS =========================
 M620 M                                  ; enable remap
 M620 S[initial_no_support_extruder]A
@@ -123,30 +108,24 @@ M620 S[initial_no_support_extruder]A
     M104 S{nozzle_temperature_initial_layer[initial_no_support_extruder]-40}
     G92 E0
     G1 E-0.5 F300
-
     G1 X0 F12000
     G1 X-13.5 F3000
     G1 X0 F24000
     G1 X-13.5 F3000
-
     M104 S140                           ; reset nozzle to expected temperature
     G392 S0                             ; disable clog detect
 M621 S[initial_no_support_extruder]A
-
 ; ===== clean nozzle ==================================
 ; NOTE: vibration compensation skipped in favor of periodic manual calibration
 ; NOTE: previous material is unknown, needs enough heat for "most" materials
 M1002 gcode_claim_action : 7            ; status: heat the nozzle
 M109 S170                               ; set to conservative temperature
-
 M1002 gcode_claim_action : 14           ; status: toolhead cleaning
 M106 P1 S255                            ; short fan blast to neck any strands
 G4 P3000                                ; pause for fan
 M106 P1 S0                              ; keep fan off during cleaning
-
 G90                                     ; absolute positioning
 M83                                     ; relative extrusion
-
 ; perform a short knock sequence by bending oozed filament
 G1 Z5 F3000                             ; clearance
 G1 E-1.0 F1200                          ; small retract before taps
@@ -168,7 +147,6 @@ G1 Z2 F3000
 G380 S3 Z-1 F1200                       ; x6
 G1 Z2 F3000
 G380 S3 Z-1 F1200                       ; x7
-
 ; brush oozed filament on rubber
 G1 Z5 F3000                             ; clearance
 G1 X25 Y185 F12000                      ; move to position
@@ -184,7 +162,6 @@ G1 X35
 G1 Y1.5
 G1 X-35
 G90
-
 ; brush oozed filament on rubber, offset
 G1 Z5 F3000                             ; clearance
 G1 X25 Y186 F12000                      ; move to position
@@ -200,7 +177,6 @@ G1 X35
 G1 Y1.5
 G1 X-35
 G90
-
 ; wipe any remaining filament
 G1 Z5 F3000                             ; clearance
 G1 X0 F12000                            ; move to service area edge
@@ -211,11 +187,9 @@ G1 X0 F24000                            ; reset to edge
 G1 X-13.5 F3000                         ; double wipe
 M106 P1 S0                              ; keep fan off during leveling
 M400
-
 ; ===== restore protections ===========================
 M211 R                                  ; restore soft endstops status
 G29.2 S0                                ; disable ABL for raw Z
-
 ;===== park and wait for heating ======================
 ; set nozzle for probing and wait for bed to final temperature
 M1002 gcode_claim_action : 2            ; status: heatbed preheating
@@ -223,7 +197,6 @@ M104 S140                               ; nozzle probing temperature
 M190 S[bed_temperature_initial_layer_single]
 M109 S140                               ; wait for nozzle
 M400                                    ; stabilize temperature
-
 ;===== bed leveling (flagged) =========================
 M1002 judge_flag g29_before_print_flag
 M622 J1
@@ -232,31 +205,25 @@ M622 J1
     M400
     M500                                ; save mesh
 M623
-
 M1002 judge_flag g29_before_print_flag
 M622 J0
     M1002 gcode_claim_action : 13       ; status: toolhead homing
     G28 T300                            ; permissive temp home
 M623
-
 G29.2 S1                                ; enable ABL with mesh
-
 ;===== nozzle load line ===============================
 M1002 gcode_claim_action : 7            ; status: heat the nozzle
 M975 S1                                 ; enable motion gating (explicit)
 G90                                     ; re-assert positioning (explicit)
 M83                                     ; re-assert extrusion (explicit)
 T1000                                   ; select local tool
-
 M211 S                                  ; push soft endstops status
 M211 X0 Y0 Z0                           ; disable soft endstop
 G1 Z5 F3000                             ; clearance
 G1 X0 Y0 F12000                         ; move to service area
 G1 X-13.5 F3000                         ; move into wiper
-
 ; set and wait for nozzle to final temperature
 M109 S{nozzle_temperature_initial_layer[initial_extruder]}
-
 ;===== prepare sensors for calibration ================
 M1002 set_filament_type:UNKNOWN         ; reset filament for calibration
 M412 S1                                 ; enable runout detect
@@ -264,21 +231,17 @@ M620.3 W1                               ; enable tangle detect
 G392 S0                                 ; disable clog detect during calibration
 M400 S2                                 ; settle sensors
 M1002 set_filament_type:{filament_type[initial_no_support_extruder]}
-
 ; minimal prime with micro-retract inside service area
 G92 E0                                  ; reset extruded amount before line
 G1 E1.2 F500                            ; extrude into melt zone
 G1 E-0.35 F1200                         ; micro-retract before purging
-
 ;===== dynamic flow calibration (flagged) =============
 M1002 judge_flag extrude_cali_flag
 M622 J1
     M1002 gcode_claim_action : 8        ; status: dynamic flow calibration
-
     M900 K0.0 L1000.0 M1.0              ; pressure advance baseline
     G90
     M83
-
     G1 Z5 F3000
     G1 X68 Y-4.2 F24000                 ; move near start position
     G1 Z0.3 F3000                       ; move to start position
@@ -291,24 +254,20 @@ M622 J1
     G1 Y0 F24000
     G1 Z0 F3000                         ; finish the patterned sweep
     M400
-
     G1 Z10 F3000
     G1 X-13.5 Y0 F12000                 ; park in service area
     M400
-
     ; primary dynamic extrusion compensation
     G1 E10 F{outer_wall_volumetric_speed/2.4*60}
     M983 F{outer_wall_volumetric_speed/2.4} A0.3 H[nozzle_diameter]
     M106 P1 S255                        ; enable fan to neck strand
     M400 S7                             ; short settle
-
     G1 X0 F12000                        ; wipe & shake
     G1 X-13.5 F3000
     G1 X0 F24000
     G1 X-13.5 F3000
     M400
     M106 P1 S0                          ; disable fan
-
     ; retry once if needed
     M1002 judge_last_extrude_cali_success
     M622 J0
@@ -322,7 +281,6 @@ M622 J1
         M400
         M106 P1 S0
     M623
-
     ; final corrections and cleanup
     G1 X-13.5 F3000
     M400
@@ -336,16 +294,13 @@ M622 J1
     M400
     M106 P1 S0
 M623                                    ; end flow dynamics calibration
-
 ;===== extrude calibration test =======================
 ; hold first-layer temps and set modes (explicit)
 M140 S{bed_temperature_initial_layer_single}
 M109 S{nozzle_temperature_initial_layer[initial_extruder]}
 M190 S{bed_temperature_initial_layer_single}
-
 G90                                     ; re-assert positioning (explicit)
 M83                                     ; re-assert extrusion (explicit)
-
 ; clear any ooze before calibrating
 M106 P1 S255                            ; full fan to neck ooze before calibration
 G4 P2000                                ; wait 1 seconds
@@ -356,7 +311,6 @@ G1 X0 F24000
 G1 X-13.5 F3000
 M400
 M106 P1 S0
-
 ; draw stabilization pattern
 G1 Z5 F3000
 G1 X68 Y-2.4 F24000
@@ -370,7 +324,6 @@ G1 X113 E0.3742 F{outer_wall_volumetric_speed/(0.3*0.5)/4*60}
 G1 X115 Z0 F24000
 G1 Z5 F3000                             ; final clearance
 M400
-
 ;===== normalize lights/fans ==========================
 ; @NOTE: includes defensive Bambu compatibility cleanup for future variants
 M960 S1 P0                              ; light/laser ch1 off
@@ -379,7 +332,6 @@ M960 S5 P0                              ; toolhead lamp off
 M106 P1 S0                              ; part fan off
 M106 P2 S0                              ; aux fan off
 M106 P3 S0                              ; chamber fan off
-
 ;===== final staging ==================================
 M1002 gcode_claim_action : 0            ; status: clear
 G392 S1                                 ; re-enable clog detect
@@ -389,10 +341,8 @@ M83                                     ; relative extrusion
 M211 R                                  ; restore soft endstops
 T1000                                   ; bambu; select local tool
 M1007 S1                                ; bambu: keep enabled
-
 ;===== for textured pei plate =========================
 {if curr_bed_type=="Textured PEI Plate"}
     G29.1 Z{-0.02}
 {endif}
-
 ; ===== hand-off to slicer first move =================
